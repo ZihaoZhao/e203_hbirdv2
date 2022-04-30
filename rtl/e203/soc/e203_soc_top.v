@@ -82,9 +82,49 @@ module e203_soc_top(
   // dwakeup is input need to be pull-up by default
   input  io_pads_aon_pmu_dwakeup_n_i_ival,
 
+    ////////////// MY AXI ///////////////////////////
+
+  output                        expl_axi_arvalid,
+  input                         expl_axi_arready,
+  output [`E203_ADDR_SIZE-1:0]  expl_axi_araddr,
+  output [3:0]                  expl_axi_arcache,
+  output [2:0]                  expl_axi_arprot,
+  output [1:0]                  expl_axi_arlock,
+  output [1:0]                  expl_axi_arburst,
+  output [3:0]                  expl_axi_arlen,
+  output [2:0]                  expl_axi_arsize,
+
+  output                        expl_axi_awvalid,
+  input                         expl_axi_awready,
+  output [`E203_ADDR_SIZE-1:0]  expl_axi_awaddr,
+  output [3:0]                  expl_axi_awcache,
+  output [2:0]                  expl_axi_awprot,
+  output [1:0]                  expl_axi_awlock,
+  output [1:0]                  expl_axi_awburst,
+  output [3:0]                  expl_axi_awlen,
+  output [2:0]                  expl_axi_awsize,
+
+  input                         expl_axi_rvalid,
+  output                        expl_axi_rready,
+  input [`E203_XLEN-1:0]        expl_axi_rdata,
+  input [1:0]                   expl_axi_rresp,
+  input                         expl_axi_rlast,
+
+  output                        expl_axi_wvalid,
+  input                         expl_axi_wready,
+  output [`E203_XLEN-1:0]       expl_axi_wdata,
+  output [(`E203_XLEN/8)-1:0]   expl_axi_wstrb,
+  output                        expl_axi_wlast,
+
+  input                         expl_axi_bvalid,
+  output                        expl_axi_bready,
+  input [1:0]                   expl_axi_bresp,
+
+    //////////////////////////////////////////////////////////
+
       // PMU output is just output without enable
   output io_pads_aon_pmu_padrst_o_oval,
-  output io_pads_aon_pmu_vddpaden_o_oval 
+  output io_pads_aon_pmu_vddpaden_o_oval
 );
 
 
@@ -273,11 +313,52 @@ module e203_soc_top(
     .io_pads_bootrom_n_o_pue        (),
     .io_pads_bootrom_n_o_ds         (),
 
+    ////////////// MY AXI ///////////////////////////
+
+    .expl_axi_arvalid     (expl_axi_arvalid),
+    .expl_axi_arready     (expl_axi_arready),
+    .expl_axi_araddr     (expl_axi_araddr),
+    .expl_axi_arcache     (expl_axi_arcache),
+    .expl_axi_arprot     (expl_axi_arprot),
+    .expl_axi_arlock     (expl_axi_arlock),
+    .expl_axi_arburst     (expl_axi_arburst),
+    .expl_axi_arlen     (expl_axi_arlen),
+    .expl_axi_arsize     (expl_axi_arsize),
+
+    .expl_axi_awvalid     (expl_axi_awvalid),
+    .expl_axi_awready     (expl_axi_awready),
+    .expl_axi_awaddr     (expl_axi_awaddr),
+    .expl_axi_awcache     (expl_axi_awcache),
+    .expl_axi_awprot     (expl_axi_awprot),
+    .expl_axi_awlock     (expl_axi_awlock),
+    .expl_axi_awburst     (expl_axi_awburst),
+    .expl_axi_awlen     (expl_axi_awlen),
+    .expl_axi_awsize     (expl_axi_awsize),
+
+    .expl_axi_rvalid     (expl_axi_rvalid),
+    .expl_axi_rready     (expl_axi_rready),
+    .expl_axi_rdata     (expl_axi_rdata),
+    .expl_axi_rresp     (expl_axi_rresp),
+    .expl_axi_rlast     (expl_axi_rlast),
+
+    .expl_axi_wvalid     (expl_axi_wvalid),
+    .expl_axi_wready     (expl_axi_wready),
+    .expl_axi_wdata     (expl_axi_wdata),
+    .expl_axi_wstrb     (expl_axi_wstrb),
+    .expl_axi_wlast     (expl_axi_wlast),
+
+    .expl_axi_bvalid     (expl_axi_bvalid),
+    .expl_axi_bready     (expl_axi_bready),
+    .expl_axi_bresp     (expl_axi_bresp),
+
+    //////////////////////////////////////////////////////////
     .io_pads_dbgmode0_n_i_ival       (io_pads_dbgmode0_n_i_ival),
 
     .io_pads_dbgmode1_n_i_ival       (io_pads_dbgmode1_n_i_ival),
 
     .io_pads_dbgmode2_n_i_ival       (io_pads_dbgmode2_n_i_ival) 
+
+
 
 
   );

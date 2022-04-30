@@ -5,8 +5,8 @@ module system
   input wire CLK100MHZ,//GCLK-W19
 //  input wire CLK32768KHZ,//RTC_CLK-Y18
 
-  input wire fpga_rst,//FPGA_RESET-T6
-  input wire mcu_rst,//MCU_RESET-P20
+  input wire fpga_resetn,//FPGA_RESET-T6
+  input wire mcu_resetn,//MCU_RESET-P20
 
 
   // Dedicated QSPI interface
@@ -25,6 +25,46 @@ module system
   inout wire mcu_TCK,//MCU_TCK-P15 
   inout wire mcu_TDI,//MCU_TDI-T18
   inout wire mcu_TMS,//MCU_TMS-P17
+
+    ////////////// MY AXI ///////////////////////////
+
+  output                        expl_axi_arvalid,
+  input                         expl_axi_arready,
+  output [`E203_ADDR_SIZE-1:0]  expl_axi_araddr,
+  output [3:0]                  expl_axi_arcache,
+  output [2:0]                  expl_axi_arprot,
+  output [1:0]                  expl_axi_arlock,
+  output [1:0]                  expl_axi_arburst,
+  output [3:0]                  expl_axi_arlen,
+  output [2:0]                  expl_axi_arsize,
+
+  output                        expl_axi_awvalid,
+  input                         expl_axi_awready,
+  output [`E203_ADDR_SIZE-1:0]  expl_axi_awaddr,
+  output [3:0]                  expl_axi_awcache,
+  output [2:0]                  expl_axi_awprot,
+  output [1:0]                  expl_axi_awlock,
+  output [1:0]                  expl_axi_awburst,
+  output [3:0]                  expl_axi_awlen,
+  output [2:0]                  expl_axi_awsize,
+
+  input                         expl_axi_rvalid,
+  output                        expl_axi_rready,
+  input [`E203_XLEN-1:0]        expl_axi_rdata,
+  input [1:0]                   expl_axi_rresp,
+  input                         expl_axi_rlast,
+
+  output                        expl_axi_wvalid,
+  input                         expl_axi_wready,
+  output [`E203_XLEN-1:0]       expl_axi_wdata,
+  output [(`E203_XLEN/8)-1:0]   expl_axi_wstrb,
+  output                        expl_axi_wlast,
+
+  input                         expl_axi_bvalid,
+  output                        expl_axi_bready,
+  input [1:0]                   expl_axi_bresp,
+
+    //////////////////////////////////////////////////////////
 
   //pmu_wakeup
 
@@ -115,7 +155,7 @@ module system
     .clk_out(CLK32768HZ)
  );
 
-  assign ck_rst = fpga_rst & mcu_rst;
+  assign ck_rst = fpga_resetn & mcu_resetn;
 
   
 
@@ -279,7 +319,8 @@ module system
   assign pmu_padrst = dut_io_pads_aon_pmu_padrst_o_oval;		
 
   // model select
-  assign dut_io_pads_bootrom_n_i_ival  = 1'b1;   //
+  // assign dut_io_pads_bootrom_n_i_ival  = 1'b1;   //
+  assign dut_io_pads_bootrom_n_i_ival  = 1'b0;   //// In Simulation we boot from ROM
   assign dut_io_pads_dbgmode0_n_i_ival = 1'b1;
   assign dut_io_pads_dbgmode1_n_i_ival = 1'b1;
   assign dut_io_pads_dbgmode2_n_i_ival = 1'b1;
@@ -290,7 +331,7 @@ module system
     .hfextclk(clk_16M),
     .hfxoscen(),
 
-    .lfextclk(CLK32768KHZ), 
+    .lfextclk(CLK32768HZ), 
     .lfxoscen(),
 
        // Note: this is the real SoC top AON domain slow clock
@@ -323,6 +364,48 @@ module system
     .io_pads_qspi0_dq_3_i_ival(dut_io_pads_qspi0_dq_3_i_ival),
     .io_pads_qspi0_dq_3_o_oval(dut_io_pads_qspi0_dq_3_o_oval),
     .io_pads_qspi0_dq_3_o_oe  (dut_io_pads_qspi0_dq_3_o_oe),
+
+
+
+    ////////////// MY AXI ///////////////////////////
+
+    .expl_axi_arvalid     (expl_axi_arvalid),
+    .expl_axi_arready     (expl_axi_arready),
+    .expl_axi_araddr     (expl_axi_araddr),
+    .expl_axi_arcache     (expl_axi_arcache),
+    .expl_axi_arprot     (expl_axi_arprot),
+    .expl_axi_arlock     (expl_axi_arlock),
+    .expl_axi_arburst     (expl_axi_arburst),
+    .expl_axi_arlen     (expl_axi_arlen),
+    .expl_axi_arsize     (expl_axi_arsize),
+
+    .expl_axi_awvalid     (expl_axi_awvalid),
+    .expl_axi_awready     (expl_axi_awready),
+    .expl_axi_awaddr     (expl_axi_awaddr),
+    .expl_axi_awcache     (expl_axi_awcache),
+    .expl_axi_awprot     (expl_axi_awprot),
+    .expl_axi_awlock     (expl_axi_awlock),
+    .expl_axi_awburst     (expl_axi_awburst),
+    .expl_axi_awlen     (expl_axi_awlen),
+    .expl_axi_awsize     (expl_axi_awsize),
+
+    .expl_axi_rvalid     (expl_axi_rvalid),
+    .expl_axi_rready     (expl_axi_rready),
+    .expl_axi_rdata     (expl_axi_rdata),
+    .expl_axi_rresp     (expl_axi_rresp),
+    .expl_axi_rlast     (expl_axi_rlast),
+
+    .expl_axi_wvalid     (expl_axi_wvalid),
+    .expl_axi_wready     (expl_axi_wready),
+    .expl_axi_wdata     (expl_axi_wdata),
+    .expl_axi_wstrb     (expl_axi_wstrb),
+    .expl_axi_wlast     (expl_axi_wlast),
+
+    .expl_axi_bvalid     (expl_axi_bvalid),
+    .expl_axi_bready     (expl_axi_bready),
+    .expl_axi_bresp     (expl_axi_bresp),
+
+    //////////////////////////////////////////////////////////
 
 
        // Note: this is the real SoC top level reset signal
