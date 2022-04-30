@@ -3,7 +3,7 @@
 module system
 (
   input wire CLK100MHZ,//GCLK-W19
-  input wire CLK32768KHZ,//RTC_CLK-Y18
+//  input wire CLK32768KHZ,//RTC_CLK-Y18
 
   input wire fpga_rst,//FPGA_RESET-T6
   input wire mcu_rst,//MCU_RESET-P20
@@ -100,9 +100,20 @@ module system
     .resetn(ck_rst),
     .clk_in1(CLK100MHZ),
     
-    .clk_out2(clk_16M), // 16 MHz, this clock we set to 16MHz 
+    .clk_out1(clk_16M), // 16 MHz, this clock we set to 16MHz 
     .locked(mmcm_locked)
   );
+
+ wire CLK32768HZ;
+ divide #(
+    .WIDTH(16),
+    .N(500)
+ )
+ div32 (
+    .clk(clk_16M),
+    .rst_n(ck_rst),
+    .clk_out(CLK32768HZ)
+ );
 
   assign ck_rst = fpga_rst & mcu_rst;
 

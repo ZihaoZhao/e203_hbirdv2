@@ -31,6 +31,7 @@
 /////////////////////////////////////////////////////////////////////////////
 /////// ISA relevant macro
 //
+`define FPGA_SOURCE
 `ifdef E203_CFG_ADDR_SIZE_IS_16
    `define E203_ADDR_SIZE_IS_16
    `define E203_PC_SIZE_IS_16
