@@ -180,11 +180,12 @@ module e203_subsys_mems(
   //    Actually since the 0xFxxx xxxx have been occupied by FIO, 
   //    sysmem have no chance to access it
   .O4_BASE_ADDR       (32'h8000_0000),       
-  .O4_BASE_REGION_LSB (31),
+  .O4_BASE_REGION_LSB (29), 
+  // .O4_BASE_REGION_LSB (31),
 
       // * Here is an example AXI Peripheral
-  .O5_BASE_ADDR       (32'h4000_0000),       
-  .O5_BASE_REGION_LSB (28),
+  .O5_BASE_ADDR       (32'hA000_0000),       
+  .O5_BASE_REGION_LSB (29),
   
       // Not used
   .O6_BASE_ADDR       (32'h0000_0000),       
