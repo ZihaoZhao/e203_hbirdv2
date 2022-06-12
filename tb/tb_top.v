@@ -10,6 +10,7 @@ module tb_top();
   wire hfclk = clk;
 
   `define CPU_TOP u_e203_soc_top.u_e203_subsys_top.u_e203_subsys_main.u_e203_cpu_top
+  //`define CPU_TOP sys_inst.dut.u_e203_subsys_top.u_e203_subsys_main.u_e203_cpu_top
   `define EXU `CPU_TOP.u_e203_cpu.u_e203_core.u_e203_exu
   `define ITCM `CPU_TOP.u_e203_srams.u_e203_itcm_ram.u_e203_itcm_gnrl_ram.u_sirv_sim_ram
 
@@ -164,7 +165,10 @@ module tb_top();
   end
 `endif
 
-  reg[8*300:1] testcase;
+  // reg[8*300:1] testcase="Z:/Code/e203_hbirdv2/riscv-tools/riscv-tests/isa/generated/rv32ui-p-andi";
+   reg[8*300:1] testcase="C:/Users/zzh/NucleiStudio_workspace/dla_ddr200/Debug/dla_ddr200";
+//  reg[8*300:1] testcase="C:/Users/zzh/NucleiStudio_workspace/axi_ddr200/Debug/axi_ddr200";
+  // reg[8*300:1] testcase="C:/Users/zzh/NucleiStudio_workspace/nice_ddr200/Debug/nice_ddr200";
   integer dumpwave;
 
   initial begin
@@ -242,26 +246,11 @@ module tb_top();
   
   
   initial begin
-    if($value$plusargs("DUMPWAVE=%d",dumpwave)) begin
-      if(dumpwave != 0) begin
-
-	 `ifdef vcs
-            $display("VCS used");
-            $fsdbDumpfile("tb_top.fsdb");
-            $fsdbDumpvars(0, tb_top, "+mda");
-         `endif
-
-	 `ifdef iverilog
-            $display("iverlog used");
-	    $dumpfile("tb_top.vcd");
-            $dumpvars(0, tb_top);
-         `endif
-      end
+    $value$plusargs("DUMPWAVE=%d",dumpwave);
+    if(dumpwave != 0)begin
+         // To add your waveform generation function
     end
   end
-
-
-
 
   integer i;
 
@@ -303,6 +292,93 @@ module tb_top();
 
   wire jtag_DRV_TDO = 1'b0;
 
+  wire mcu_wakeup = 1'b1;
+
+//e203_soc_bd_wrapper u_e203_soc_bd_wrapper
+//   (
+//    .clk_in1_0(clk),
+//    .gpioA_0(),
+//    .gpioB_0(),
+//    .led_4bits_tri_o(leds),
+//    .mcu_TCK_0(),
+//    .mcu_TDI_0(),
+//    .mcu_TDO_0(),
+//    .mcu_TMS_0(),
+//    .mcu_wakeup_0(),
+//    .pmu_paden_0(),
+//    .pmu_padrst_0(),
+//    .qspi0_cs_0(),
+//    .qspi0_dq_0(),
+//    .qspi0_sck_0(),
+//    .reset(rst_n)
+//    );
+
+//system sys_inst(
+//  .CLK100MHZ(clk),//GCLK-W19
+
+//  .fpga_rst(rst_n),//FPGA_RESET-T6
+//  .mcu_rst(rst_n),//MCU_RESET-P20
+
+//  // Dedicated QSPI interface
+//  .qspi0_cs(),
+//  .qspi0_sck(),
+//  .qspi0_dq(),
+                           
+//  //gpioA
+//  .gpioA(),//GPIOA00~GPIOA31
+
+//  //gpioB
+//  .gpioB(),//GPIOB00~GPIOB31
+
+//  // JD (used for JTAG connection)
+//  .mcu_TDO(jtag_TDO),//MCU_TDO-N17
+//  .mcu_TCK(jtag_TCK),//MCU_TCK-P15 
+//  .mcu_TDI(jtag_TDI),//MCU_TDI-T18
+//  .mcu_TMS(jtag_TMS),//MCU_TMS-P17
+
+//    ////////////// MY AXI ///////////////////////////
+
+//  .expl_axi_arvalid(),
+//  .expl_axi_arready(),
+//  .expl_axi_araddr(),
+//  .expl_axi_arcache(),
+//  .expl_axi_arprot(),
+//  .expl_axi_arlock(),
+//  .expl_axi_arburst(),
+//  .expl_axi_arlen(),
+//  .expl_axi_arsize(),
+
+//  .expl_axi_awvalid(),
+//  .expl_axi_awready(),
+//  .expl_axi_awaddr(),
+//  .expl_axi_awcache(),
+//  .expl_axi_awprot(),
+//  .expl_axi_awlock(),
+//  .expl_axi_awburst(),
+//  .expl_axi_awlen(),
+//  .expl_axi_awsize(),
+
+//  .expl_axi_rvalid(),
+//  .expl_axi_rready(),
+//  .expl_axi_rdata(),
+//  .expl_axi_rresp(),
+//  .expl_axi_rlast(),
+
+//  .expl_axi_wvalid(),
+//  .expl_axi_wready(),
+//  .expl_axi_wdata(),
+//  .expl_axi_wstrb(),
+//  .expl_axi_wlast(),
+
+//  .expl_axi_bvalid(),
+//  .expl_axi_bready(),
+//  .expl_axi_bresp(),
+
+//  .pmu_paden(),  //PMU_VDDPADEN-U15
+//  .pmu_padrst(), //PMU_VADDPARST_V15
+//  .mcu_wakeup(mcu_wakeup)  //MCU_WAKE-N15
+//);
+
 
 e203_soc_top u_e203_soc_top(
    
@@ -317,30 +393,41 @@ e203_soc_top u_e203_soc_top(
    .io_pads_jtag_TDI_i_ival (jtag_TDI),
    .io_pads_jtag_TDO_o_oval (jtag_TDO),
    .io_pads_jtag_TDO_o_oe (),
-
-   .io_pads_gpioA_i_ival(32'b0),
+   
+   .io_pads_gpioA_i_ival(32'hffff),
    .io_pads_gpioA_o_oval(),
-   .io_pads_gpioA_o_oe  (),
-
-   .io_pads_gpioB_i_ival(32'b0),
+   .io_pads_gpioA_o_oe(),
+   
+   .io_pads_gpioB_i_ival(32'hffff),
    .io_pads_gpioB_o_oval(),
-   .io_pads_gpioB_o_oe  (),
-
+   .io_pads_gpioB_o_oe(),
+   
    .io_pads_qspi0_sck_o_oval (),
-   .io_pads_qspi0_cs_0_o_oval(),
-   .io_pads_qspi0_dq_0_i_ival(1'b1),
-   .io_pads_qspi0_dq_0_o_oval(),
-   .io_pads_qspi0_dq_0_o_oe  (),
-   .io_pads_qspi0_dq_1_i_ival(1'b1),
-   .io_pads_qspi0_dq_1_o_oval(),
-   .io_pads_qspi0_dq_1_o_oe  (),
-   .io_pads_qspi0_dq_2_i_ival(1'b1),
-   .io_pads_qspi0_dq_2_o_oval(),
-   .io_pads_qspi0_dq_2_o_oe  (),
-   .io_pads_qspi0_dq_3_i_ival(1'b1),
-   .io_pads_qspi0_dq_3_o_oval(),
-   .io_pads_qspi0_dq_3_o_oe  (),
-
+   .io_pads_qspi0_dq_0_i_ival (1'b1),
+   .io_pads_qspi0_dq_0_o_oval (),
+   .io_pads_qspi0_dq_0_o_oe (),
+//   .io_pads_qspi0_dq_0_o_ie (),
+//   .io_pads_qspi0_dq_0_o_pue (),
+//   .io_pads_qspi0_dq_0_o_ds (),
+   .io_pads_qspi0_dq_1_i_ival (1'b1),
+   .io_pads_qspi0_dq_1_o_oval (),
+   .io_pads_qspi0_dq_1_o_oe (),
+//   .io_pads_qspi0_dq_1_o_ie (),
+//   .io_pads_qspi0_dq_1_o_pue (),
+//   .io_pads_qspi0_dq_1_o_ds (),
+   .io_pads_qspi0_dq_2_i_ival (1'b1),
+   .io_pads_qspi0_dq_2_o_oval (),
+   .io_pads_qspi0_dq_2_o_oe (),
+//   .io_pads_qspi0_dq_2_o_ie (),
+//   .io_pads_qspi0_dq_2_o_pue (),
+//   .io_pads_qspi0_dq_2_o_ds (),
+   .io_pads_qspi0_dq_3_i_ival (1'b1),
+   .io_pads_qspi0_dq_3_o_oval (),
+   .io_pads_qspi0_dq_3_o_oe (),
+//   .io_pads_qspi0_dq_3_o_ie (),
+//   .io_pads_qspi0_dq_3_o_pue (),
+//   .io_pads_qspi0_dq_3_o_ds (),
+   .io_pads_qspi0_cs_0_o_oval (),
    .io_pads_aon_erst_n_i_ival (rst_n),//This is the real reset, active low
    .io_pads_aon_pmu_dwakeup_n_i_ival (1'b1),
 
@@ -352,8 +439,6 @@ e203_soc_top u_e203_soc_top(
     .io_pads_dbgmode1_n_i_ival       (1'b1),
     .io_pads_dbgmode2_n_i_ival       (1'b1) 
 );
-
+ 
 
 endmodule
-
-
